@@ -145,9 +145,13 @@
         background: linear-gradient(135deg, #fa709a, #fee140);
       }
 
+      .btn-warning {
+        background: linear-gradient(135deg, #ffa726, #ff9800);
+      }
+
       .players-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
         gap: 15px;
         margin-bottom: 20px;
       }
@@ -155,7 +159,7 @@
       .player-card {
         background: #f8f9fa;
         border-radius: 12px;
-        padding: 20px;
+        padding: 15px;
         text-align: center;
         border: 3px solid transparent;
         transition: all 0.3s ease;
@@ -172,17 +176,18 @@
       }
 
       .player-name {
-        font-size: 1.2rem;
+        font-size: 1.1rem;
         font-weight: bold;
-        margin-bottom: 10px;
+        margin-bottom: 8px;
         color: #333;
+        word-wrap: break-word;
       }
 
       .player-score {
-        font-size: 2rem;
+        font-size: 1.8rem;
         font-weight: bold;
         color: #667eea;
-        margin-bottom: 15px;
+        margin-bottom: 10px;
       }
 
       .score-input {
@@ -348,9 +353,20 @@
         display: none;
       }
 
+      .data-status {
+        background: #e8f5e8;
+        border: 2px solid #28a745;
+        border-radius: 8px;
+        padding: 10px;
+        margin-bottom: 15px;
+        text-align: center;
+        font-size: 0.9rem;
+        color: #155724;
+      }
+
       @media (max-width: 768px) {
         .players-grid {
-          grid-template-columns: 1fr 1fr;
+          grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
           gap: 8px;
         }
 
@@ -382,12 +398,6 @@
         .modal-content {
           padding: 15px;
         }
-      }
-
-      @media (max-width: 480px) {
-        .players-grid {
-          grid-template-columns: 1fr;
-        }
 
         .player-card {
           padding: 12px;
@@ -396,9 +406,23 @@
         .player-score {
           font-size: 1.5rem;
         }
+      }
+
+      @media (max-width: 480px) {
+        .players-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
 
         .container {
           padding: 10px;
+        }
+
+        .player-name {
+          font-size: 1rem;
+        }
+
+        .player-score {
+          font-size: 1.4rem;
         }
       }
 
@@ -431,12 +455,24 @@
         <div class="game-area">
           <div id="setupSection" class="setup-section">
             <h3>🎮 Thiết Lập Game</h3>
+
+            <div id="dataStatus" class="data-status hidden">
+              📱 Dữ liệu đã được lưu tự động! Game sẽ tiếp tục ngay cả khi bạn
+              reload trang.
+            </div>
+
             <div class="input-group">
               <label>Số người chơi:</label>
               <select id="playerCount">
                 <option value="2">2 người</option>
                 <option value="3">3 người</option>
                 <option value="4" selected>4 người</option>
+                <option value="5">5 người</option>
+                <option value="6">6 người</option>
+                <option value="7">7 người</option>
+                <option value="8">8 người</option>
+                <option value="9">9 người</option>
+                <option value="10">10 người</option>
               </select>
               <button onclick="setupPlayers()">Thiết lập</button>
             </div>
@@ -489,6 +525,13 @@
                   style="flex: 1; min-width: 120px"
                 >
                   ↶ Hoàn tác
+                </button>
+                <button
+                  onclick="clearAllData()"
+                  class="btn-warning"
+                  style="flex: 1; min-width: 120px"
+                >
+                  🗑️ Xóa dữ liệu
                 </button>
                 <button
                   onclick="resetGame()"
@@ -629,6 +672,138 @@
       let gameStartTime = null;
       let timerInterval = null;
       let activeInput = null;
+      let totalElapsedTime = 0;
+
+      // Local Storage keys
+      const STORAGE_KEYS = {
+        players: "tienlen_players",
+        roundHistory: "tienlen_roundHistory",
+        currentRound: "tienlen_currentRound",
+        gameStartTime: "tienlen_gameStartTime",
+        totalElapsedTime: "tienlen_totalElapsedTime",
+        isGameActive: "tienlen_isGameActive",
+      };
+
+      // Save data to localStorage
+      function saveGameData() {
+        try {
+          const gameData = {
+            players: players,
+            roundHistory: roundHistory,
+            currentRound: currentRound,
+            gameStartTime: gameStartTime,
+            totalElapsedTime: totalElapsedTime,
+            isGameActive: true,
+          };
+
+          Object.keys(gameData).forEach((key) => {
+            if (STORAGE_KEYS[key]) {
+              const value = gameData[key];
+              localStorage.setItem(STORAGE_KEYS[key], JSON.stringify(value));
+            }
+          });
+
+          // Show data status
+          const statusEl = document.getElementById("dataStatus");
+          if (statusEl && players.length > 0) {
+            statusEl.classList.remove("hidden");
+          }
+        } catch (error) {
+          console.log("Không thể lưu dữ liệu:", error);
+        }
+      }
+
+      // Load data from localStorage
+      function loadGameData() {
+        try {
+          const isGameActive = JSON.parse(
+            localStorage.getItem(STORAGE_KEYS.isGameActive) || "false"
+          );
+
+          if (!isGameActive) return false;
+
+          const savedPlayers = JSON.parse(
+            localStorage.getItem(STORAGE_KEYS.players) || "[]"
+          );
+          const savedRoundHistory = JSON.parse(
+            localStorage.getItem(STORAGE_KEYS.roundHistory) || "[]"
+          );
+          const savedCurrentRound = JSON.parse(
+            localStorage.getItem(STORAGE_KEYS.currentRound) || "1"
+          );
+          const savedGameStartTime = JSON.parse(
+            localStorage.getItem(STORAGE_KEYS.gameStartTime) || "null"
+          );
+          const savedTotalElapsedTime = JSON.parse(
+            localStorage.getItem(STORAGE_KEYS.totalElapsedTime) || "0"
+          );
+
+          if (savedPlayers.length > 0) {
+            players = savedPlayers;
+            roundHistory = savedRoundHistory;
+            currentRound = savedCurrentRound;
+            gameStartTime = savedGameStartTime;
+            totalElapsedTime = savedTotalElapsedTime;
+
+            // Restore game state
+            document.getElementById("setupSection").classList.add("hidden");
+            document.getElementById("gameSection").classList.remove("hidden");
+            document.getElementById("roundNumber").textContent = currentRound;
+
+            startTimer();
+            updatePlayersDisplay();
+            updateHistory();
+            updateStats();
+
+            return true;
+          }
+        } catch (error) {
+          console.log("Không thể tải dữ liệu:", error);
+        }
+        return false;
+      }
+
+      // Clear all saved data
+      function clearAllData() {
+        if (
+          confirm(
+            "Bạn có chắc muốn xóa toàn bộ dữ liệu đã lưu? Hành động này không thể hoàn tác!"
+          )
+        ) {
+          Object.values(STORAGE_KEYS).forEach((key) => {
+            localStorage.removeItem(key);
+          });
+
+          // Reset game state
+          players = [];
+          roundHistory = [];
+          currentRound = 1;
+          gameStartTime = null;
+          totalElapsedTime = 0;
+
+          if (timerInterval) {
+            clearInterval(timerInterval);
+          }
+
+          document.getElementById("setupSection").classList.remove("hidden");
+          document.getElementById("gameSection").classList.add("hidden");
+          document.getElementById("playerNames").classList.add("hidden");
+          document.getElementById("dataStatus").classList.add("hidden");
+          document.getElementById("gameEndModal").classList.remove("show");
+          document.getElementById("scoreModal").classList.remove("show");
+
+          activeInput = null;
+
+          document.getElementById("totalTime").textContent = "00:00";
+          document.getElementById("roundHistory").innerHTML =
+            '<p style="text-align: center; color: #666; font-style: italic;">Chưa có ván nào được chơi</p>';
+
+          updateStats();
+          setupPlayers();
+
+          alert("Đã xóa toàn bộ dữ liệu!");
+        }
+      }
 
       function setupPlayers() {
         const count = parseInt(document.getElementById("playerCount").value);
@@ -692,17 +867,24 @@
         document.getElementById("gameSection").classList.remove("hidden");
 
         gameStartTime = Date.now();
+        totalElapsedTime = 0;
         startTimer();
         updatePlayersDisplay();
         updateStats();
+        saveGameData();
       }
 
       function startTimer() {
+        if (timerInterval) {
+          clearInterval(timerInterval);
+        }
+
         timerInterval = setInterval(() => {
           if (gameStartTime) {
-            const elapsed = Date.now() - gameStartTime;
-            const minutes = Math.floor(elapsed / 60000);
-            const seconds = Math.floor((elapsed % 60000) / 1000);
+            const currentElapsed = Date.now() - gameStartTime;
+            const totalTime = totalElapsedTime + currentElapsed;
+            const minutes = Math.floor(totalTime / 60000);
+            const seconds = Math.floor((totalTime % 60000) / 1000);
             document.getElementById("totalTime").textContent = `${minutes
               .toString()
               .padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
@@ -854,6 +1036,7 @@
         updateHistory();
         updateStats();
         closeScoreModal();
+        saveGameData();
 
         checkGameEnd();
       }
@@ -910,6 +1093,7 @@
           updatePlayersDisplay();
           updateHistory();
           updateStats();
+          saveGameData();
         }
       }
 
@@ -923,6 +1107,12 @@
           document.getElementById("winnerName").textContent = winner.name;
           document.getElementById("gameEndModal").classList.add("show");
 
+          // Update total elapsed time before stopping timer
+          if (gameStartTime) {
+            totalElapsedTime += Date.now() - gameStartTime;
+            gameStartTime = null;
+          }
+
           if (timerInterval) {
             clearInterval(timerInterval);
           }
@@ -935,10 +1125,16 @@
 
       function resetGame() {
         if (confirm("Bạn có chắc muốn bắt đầu game mới?")) {
+          // Update total elapsed time before reset
+          if (gameStartTime) {
+            totalElapsedTime += Date.now() - gameStartTime;
+          }
+
           players = [];
           roundHistory = [];
           currentRound = 1;
           gameStartTime = null;
+          totalElapsedTime = 0;
 
           if (timerInterval) {
             clearInterval(timerInterval);
@@ -947,6 +1143,7 @@
           document.getElementById("setupSection").classList.remove("hidden");
           document.getElementById("gameSection").classList.add("hidden");
           document.getElementById("playerNames").classList.add("hidden");
+          document.getElementById("dataStatus").classList.add("hidden");
           document.getElementById("gameEndModal").classList.remove("show");
           document.getElementById("scoreModal").classList.remove("show");
 
@@ -957,11 +1154,42 @@
             '<p style="text-align: center; color: #666; font-style: italic;">Chưa có ván nào được chơi</p>';
 
           updateStats();
+          saveGameData();
+          setupPlayers();
         }
       }
 
-      // Initialize
-      setupPlayers();
+      // Initialize the app
+      function initApp() {
+        // Try to load saved game first
+        const gameLoaded = loadGameData();
+
+        if (!gameLoaded) {
+          // No saved game, start fresh
+          setupPlayers();
+        }
+      }
+
+      // Run when page loads
+      window.addEventListener("load", initApp);
+
+      // Save data when page is about to unload
+      window.addEventListener("beforeunload", () => {
+        if (players.length > 0) {
+          // Update total elapsed time
+          if (gameStartTime) {
+            totalElapsedTime += Date.now() - gameStartTime;
+          }
+          saveGameData();
+        }
+      });
+
+      // Auto-save every 30 seconds during active game
+      setInterval(() => {
+        if (players.length > 0) {
+          saveGameData();
+        }
+      }, 30000);
     </script>
   </body>
 </html>
