@@ -862,8 +862,11 @@
 
         saveScore(roundIndex, playerIndex, newScore, cell);
 
-        // Hide virtual keyboard
+        // Hide virtual keyboard and blur input to prevent iOS keyboard
         document.getElementById("virtualKeyboard").classList.remove("show");
+        if (input) {
+          input.blur();
+        }
         currentEditingInput = null;
       }
 
