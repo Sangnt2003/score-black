@@ -387,6 +387,49 @@
         display: none;
       }
 
+      /* Restore Game Banner */
+      .restore-banner {
+        background: linear-gradient(135deg, #4facfe, #00f2fe);
+        color: white;
+        border-radius: 15px;
+        padding: 15px;
+        margin-bottom: 15px;
+        text-align: center;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      }
+
+      .restore-banner h4 {
+        margin-bottom: 10px;
+        font-size: 16px;
+      }
+
+      .restore-banner p {
+        margin-bottom: 15px;
+        font-size: 14px;
+        opacity: 0.9;
+      }
+
+      .restore-buttons {
+        display: flex;
+        gap: 10px;
+      }
+
+      .restore-btn {
+        background: rgba(255, 255, 255, 0.2);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        color: white;
+        border-radius: 8px;
+        padding: 8px 15px;
+        cursor: pointer;
+        font-weight: bold;
+        transition: all 0.3s ease;
+        flex: 1;
+      }
+
+      .restore-btn:hover {
+        background: rgba(255, 255, 255, 0.3);
+      }
+
       /* Modal */
       .modal {
         display: none;
@@ -480,6 +523,10 @@
         .container {
           padding-bottom: 250px; /* More space on mobile */
         }
+
+        .restore-buttons {
+          flex-direction: column;
+        }
       }
     </style>
   </head>
@@ -501,6 +548,20 @@
             📊
           </button>
           <button class="icon-btn" onclick="showMenu()" title="Menu">🎲</button>
+        </div>
+      </div>
+
+      <!-- Restore Game Banner -->
+      <div id="restoreBanner" class="restore-banner hidden">
+        <h4>🎮 Phát hiện game đang chơi dở!</h4>
+        <p id="restoreInfo"></p>
+        <div class="restore-buttons">
+          <button onclick="restoreGame()" class="restore-btn">
+            ↺ Tiếp tục game
+          </button>
+          <button onclick="dismissRestore()" class="restore-btn">
+            ✕ Game mới
+          </button>
         </div>
       </div>
 
@@ -598,6 +659,29 @@
               <option value="false">Tắt</option>
             </select>
           </div>
+          <div class="input-group">
+            <label>Dữ liệu đã lưu:</label>
+            <div style="display: flex; gap: 10px; margin-top: 5px">
+              <button
+                onclick="exportGameData()"
+                class="btn-primary"
+                style="flex: 1; font-size: 12px"
+              >
+                📤 Xuất dữ liệu
+              </button>
+              <button
+                onclick="clearAllData()"
+                class="btn-primary"
+                style="
+                  flex: 1;
+                  font-size: 12px;
+                  background: linear-gradient(135deg, #e74c3c, #c0392b);
+                "
+              >
+                🗑️ Xóa tất cả
+              </button>
+            </div>
+          </div>
         </div>
         <div class="modal-buttons">
           <button onclick="saveSettings()" class="btn-primary" style="flex: 1">
@@ -672,12 +756,14 @@
         autoSave: true,
       };
       let currentEditingInput = null;
-      let gameData = {}; // In-memory storage instead of localStorage
+      let hasShownRestoreBanner = false;
 
       // Initialize app
       function init() {
-        loadGameData();
-        if (players.length > 0) {
+        const hasData = loadGameData();
+        if (hasData && !hasShownRestoreBanner) {
+          showRestoreBanner();
+        } else if (players.length > 0) {
           showGameSection();
         }
 
@@ -694,6 +780,32 @@
           },
           false
         );
+      }
+
+      function showRestoreBanner() {
+        const banner = document.getElementById("restoreBanner");
+        const info = document.getElementById("restoreInfo");
+
+        const playerNames = players.map((p) => p.name).join(", ");
+        const roundsPlayed = rounds.length;
+
+        info.textContent = `${players.length} người chơi (${playerNames}) - ${roundsPlayed} ván đã chơi`;
+
+        banner.classList.remove("hidden");
+        hasShownRestoreBanner = true;
+      }
+
+      function restoreGame() {
+        document.getElementById("restoreBanner").classList.add("hidden");
+        showGameSection();
+      }
+
+      function dismissRestore() {
+        document.getElementById("restoreBanner").classList.add("hidden");
+        clearGameData();
+        players = [];
+        rounds = [];
+        currentRound = 1;
       }
 
       function setupPlayerNames() {
@@ -751,6 +863,9 @@
 
         rounds = [];
         currentRound = 1;
+
+        // Hide restore banner if showing
+        document.getElementById("restoreBanner").classList.add("hidden");
 
         showGameSection();
         saveGameData();
@@ -1013,6 +1128,7 @@
           document.getElementById("gameSection").classList.add("hidden");
           document.getElementById("setupSection").classList.remove("hidden");
           document.getElementById("playerNamesSection").classList.add("hidden");
+          document.getElementById("restoreBanner").classList.add("hidden");
 
           closeModal("resultsModal");
           clearGameData();
@@ -1020,6 +1136,7 @@
           // Hide virtual keyboard if showing
           document.getElementById("virtualKeyboard").classList.remove("show");
           currentEditingInput = null;
+          hasShownRestoreBanner = false;
         }
       }
 
@@ -1049,8 +1166,92 @@
         alert("Đã lưu cài đặt!");
       }
 
+      function exportGameData() {
+        try {
+          const dataToExport = {
+            players,
+            rounds,
+            currentRound,
+            gameSettings,
+            exportDate: new Date().toISOString(),
+          };
+
+          const dataStr = JSON.stringify(dataToExport, null, 2);
+          const dataBlob = new Blob([dataStr], { type: "application/json" });
+
+          const link = document.createElement("a");
+          link.href = URL.createObjectURL(dataBlob);
+          link.download = `tien-len-game-${
+            new Date().toISOString().split("T")[0]
+          }.json`;
+          link.click();
+
+          alert("Đã xuất dữ liệu game!");
+        } catch (error) {
+          alert("Lỗi khi xuất dữ liệu: " + error.message);
+        }
+      }
+
+      function clearAllData() {
+        if (
+          confirm(
+            "Bạn có chắc muốn xóa TẤT CẢ dữ liệu đã lưu?\nHành động này không thể hoàn tác!"
+          )
+        ) {
+          clearGameData();
+          alert("Đã xóa tất cả dữ liệu!");
+          closeModal("settingsModal");
+        }
+      }
+
       function showStats() {
-        alert("Tính năng thống kê sẽ được bổ sung trong phiên bản sau!");
+        if (players.length === 0) {
+          alert("Chưa có dữ liệu để hiển thị thống kê!");
+          return;
+        }
+
+        const stats = calculateStats();
+        let statsHTML = `
+          <div style="text-align: left;">
+            <h4 style="color: #8e44ad; margin-bottom: 10px;">📊 Thống kê game hiện tại:</h4>
+            <p><strong>Tổng số ván:</strong> ${rounds.length}</p>
+            <p><strong>Điểm cao nhất:</strong> ${stats.highestScore} (${stats.highestPlayer})</p>
+            <p><strong>Điểm thấp nhất:</strong> ${stats.lowestScore} (${stats.lowestPlayer})</p>
+            <p><strong>Điểm trung bình:</strong> ${stats.averageScore}</p>
+            <p><strong>Người dẫn đầu:</strong> ${stats.leader}</p>
+          </div>
+        `;
+
+        document.getElementById("finalResults").innerHTML = statsHTML;
+        document.getElementById("resultsModal").classList.add("show");
+      }
+
+      function calculateStats() {
+        const scores = players.map((p) => p.totalScore);
+        const highestScore = Math.max(...scores);
+        const lowestScore = Math.min(...scores);
+        const averageScore = Math.round(
+          scores.reduce((a, b) => a + b, 0) / scores.length
+        );
+
+        const highestPlayer = players.find(
+          (p) => p.totalScore === highestScore
+        ).name;
+        const lowestPlayer = players.find(
+          (p) => p.totalScore === lowestScore
+        ).name;
+        const leader = players.reduce((prev, current) =>
+          prev.totalScore > current.totalScore ? prev : current
+        ).name;
+
+        return {
+          highestScore,
+          lowestScore,
+          averageScore,
+          highestPlayer,
+          lowestPlayer,
+          leader,
+        };
       }
 
       function showMenu() {
@@ -1064,35 +1265,58 @@
         document.getElementById(modalId).classList.remove("show");
       }
 
-      // Storage functions (using in-memory storage instead of localStorage)
+      // Storage functions (using localStorage for persistent data storage)
       function saveGameData() {
         if (!gameSettings.autoSave) return;
 
-        gameData = {
-          players,
-          rounds,
-          currentRound,
-          gameSettings,
-        };
+        try {
+          const gameData = {
+            players,
+            rounds,
+            currentRound,
+            gameSettings,
+            lastSaved: new Date().toISOString(),
+          };
+          localStorage.setItem("tienLenGameData", JSON.stringify(gameData));
+          console.log(
+            "✅ Đã lưu dữ liệu game:",
+            new Date().toLocaleTimeString()
+          );
+        } catch (error) {
+          console.error("❌ Lỗi khi lưu dữ liệu:", error);
+          alert(
+            "Không thể lưu dữ liệu. Vui lòng kiểm tra dung lượng trống của trình duyệt."
+          );
+        }
       }
 
       function loadGameData() {
         try {
-          if (gameData.players) {
+          const savedData = localStorage.getItem("tienLenGameData");
+          if (savedData) {
+            const gameData = JSON.parse(savedData);
             players = gameData.players || [];
             rounds = gameData.rounds || [];
             currentRound = gameData.currentRound || 1;
             gameSettings = { ...gameSettings, ...gameData.gameSettings };
+            console.log("✅ Đã tải dữ liệu game từ:", gameData.lastSaved);
             return true;
           }
         } catch (error) {
-          console.log("Không thể tải dữ liệu:", error);
+          console.error("❌ Không thể tải dữ liệu:", error);
+          // Clear corrupted data
+          localStorage.removeItem("tienLenGameData");
         }
         return false;
       }
 
       function clearGameData() {
-        gameData = {};
+        try {
+          localStorage.removeItem("tienLenGameData");
+          console.log("🗑️ Đã xóa dữ liệu game");
+        } catch (error) {
+          console.error("❌ Lỗi khi xóa dữ liệu:", error);
+        }
       }
 
       // Close virtual keyboard when clicking outside
@@ -1155,7 +1379,11 @@
       window.addEventListener("load", init);
 
       // Save before unload
-      window.addEventListener("beforeunload", saveGameData);
+      window.addEventListener("beforeunload", () => {
+        if (players.length > 0) {
+          saveGameData();
+        }
+      });
     </script>
   </body>
 </html>
