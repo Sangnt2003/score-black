@@ -13,7 +13,12 @@
 
       body {
         font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(
+          135deg,
+          #ff9a9e 0%,
+          #fecfef 50%,
+          #fecfef 100%
+        );
         min-height: 100vh;
         color: #333;
       }
@@ -21,89 +26,257 @@
       .container {
         max-width: 100%;
         margin: 0 auto;
-        padding: 15px;
+        padding: 10px;
       }
 
       .header {
-        text-align: center;
-        color: white;
-        margin-bottom: 20px;
-      }
-
-      .header h1 {
-        font-size: 2rem;
-        margin-bottom: 8px;
-        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-      }
-
-      .header p {
-        font-size: 1rem;
-        opacity: 0.9;
-      }
-
-      .main-content {
+        background: rgba(255, 255, 255, 0.9);
+        border-radius: 25px;
+        padding: 15px;
+        margin-bottom: 15px;
         display: flex;
-        flex-direction: column;
-        gap: 20px;
+        justify-content: space-between;
+        align-items: center;
+        backdrop-filter: blur(10px);
       }
 
-      .game-area {
+      .header-left {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .header-center {
         background: white;
+        border-radius: 50%;
+        width: 60px;
+        height: 60px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        font-weight: bold;
+        color: #8e44ad;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      }
+
+      .header-right {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .icon-btn {
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        background: white;
+        border: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        font-size: 20px;
+        color: #8e44ad;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+      }
+
+      .icon-btn:hover {
+        transform: scale(1.1);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      }
+
+      /* Player headers */
+      .players-header {
+        display: grid;
+        grid-template-columns: 50px repeat(auto-fit, minmax(80px, 1fr));
+        gap: 5px;
+        margin-bottom: 10px;
+      }
+
+      .round-label {
+        background: rgba(255, 255, 255, 0.8);
+        border-radius: 15px;
+        padding: 8px;
+        text-align: center;
+        font-size: 12px;
+        color: #8e44ad;
+        font-weight: bold;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .player-header {
+        background: rgba(255, 255, 255, 0.9);
+        border-radius: 15px;
+        padding: 8px 5px;
+        text-align: center;
+        backdrop-filter: blur(10px);
+      }
+
+      .player-name {
+        font-weight: bold;
+        font-size: 14px;
+        margin-bottom: 2px;
+        color: #2c3e50;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .player-total {
+        font-size: 18px;
+        font-weight: bold;
+        color: #8e44ad;
+      }
+
+      /* Game board */
+      .game-board {
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 20px;
+        padding: 15px;
+        backdrop-filter: blur(10px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        max-height: 60vh;
+        overflow-y: auto;
+      }
+
+      .round-row {
+        display: grid;
+        grid-template-columns: 50px repeat(auto-fit, minmax(80px, 1fr));
+        gap: 5px;
+        margin-bottom: 8px;
+        align-items: center;
+      }
+
+      .round-number {
+        background: linear-gradient(135deg, #ffd54f, #ffb300);
+        border-radius: 10px;
+        padding: 8px;
+        text-align: center;
+        font-weight: bold;
+        color: white;
+        font-size: 14px;
+      }
+
+      .score-cell {
+        background: rgba(255, 255, 255, 0.8);
+        border: 2px solid transparent;
+        border-radius: 10px;
+        padding: 8px 5px;
+        text-align: center;
+        font-weight: bold;
+        font-size: 16px;
+        color: #2c3e50;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        min-height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .score-cell:hover {
+        background: rgba(255, 255, 255, 1);
+        border-color: #8e44ad;
+        transform: scale(1.05);
+      }
+
+      .score-cell.editing {
+        background: #fff3e0;
+        border-color: #ff9800;
+        box-shadow: 0 0 10px rgba(255, 152, 0, 0.3);
+      }
+
+      .score-input {
+        width: 100%;
+        border: none;
+        background: transparent;
+        text-align: center;
+        font-weight: bold;
+        font-size: 16px;
+        color: #2c3e50;
+        outline: none;
+      }
+
+      /* Control buttons */
+      .controls {
+        display: flex;
+        gap: 10px;
+        margin-top: 15px;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+
+      .control-btn {
+        background: rgba(255, 255, 255, 0.9);
+        border: none;
+        border-radius: 25px;
+        padding: 12px 20px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        backdrop-filter: blur(10px);
+        color: #8e44ad;
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+      }
+
+      .control-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+      }
+
+      .btn-add {
+        background: linear-gradient(135deg, #4facfe, #00f2fe);
+        color: white;
+      }
+      .btn-undo {
+        background: linear-gradient(135deg, #fa709a, #fee140);
+        color: white;
+      }
+      .btn-result {
+        background: linear-gradient(135deg, #a8edea, #fed6e3);
+      }
+
+      /* Setup section */
+      .setup-section {
+        background: rgba(255, 255, 255, 0.95);
         border-radius: 20px;
         padding: 20px;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-        order: 1;
-      }
-
-      .sidebar {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 15px;
-        order: 2;
-      }
-
-      .card {
-        background: white;
-        border-radius: 12px;
-        padding: 15px;
-        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
-      }
-
-      .card h3 {
-        font-size: 1.1rem;
-        margin-bottom: 12px;
-        color: #667eea;
-      }
-
-      .setup-section {
         margin-bottom: 20px;
+        backdrop-filter: blur(10px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
       }
 
       .setup-section h3 {
-        color: #667eea;
-        margin-bottom: 12px;
-        font-size: 1.2rem;
+        color: #8e44ad;
+        margin-bottom: 15px;
+        font-size: 1.3rem;
+        text-align: center;
       }
 
       .input-group {
         display: flex;
         flex-direction: column;
         gap: 8px;
-        margin-bottom: 12px;
-        align-items: stretch;
+        margin-bottom: 15px;
       }
 
       .input-group label {
-        font-weight: 600;
-        font-size: 0.9rem;
+        font-weight: bold;
+        color: #2c3e50;
       }
 
       input,
-      select,
-      button {
+      select {
         padding: 12px 15px;
         border: 2px solid #e1e5e9;
-        border-radius: 8px;
+        border-radius: 10px;
         font-size: 16px;
         transition: all 0.3s ease;
       }
@@ -111,149 +284,40 @@
       input:focus,
       select:focus {
         outline: none;
-        border-color: #667eea;
-        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        border-color: #8e44ad;
+        box-shadow: 0 0 0 3px rgba(142, 68, 173, 0.1);
       }
 
-      button {
+      .btn-primary {
         background: linear-gradient(135deg, #667eea, #764ba2);
         color: white;
         border: none;
+        border-radius: 10px;
+        padding: 12px 20px;
+        font-weight: bold;
         cursor: pointer;
-        font-weight: 600;
-        transition: transform 0.2s ease;
+        width: 100%;
+        font-size: 16px;
+        transition: all 0.3s ease;
       }
 
-      button:hover {
+      .btn-primary:hover {
         transform: translateY(-2px);
         box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
       }
 
-      button:active {
-        transform: translateY(0);
-      }
-
-      .btn-secondary {
-        background: linear-gradient(135deg, #f093fb, #f5576c);
-      }
-
-      .btn-success {
-        background: linear-gradient(135deg, #4facfe, #00f2fe);
-      }
-
-      .btn-danger {
-        background: linear-gradient(135deg, #fa709a, #fee140);
-      }
-
-      .btn-warning {
-        background: linear-gradient(135deg, #ffa726, #ff9800);
-      }
-
-      .players-grid {
+      .names-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-        gap: 15px;
-        margin-bottom: 20px;
-      }
-
-      .player-card {
-        background: #f8f9fa;
-        border-radius: 12px;
-        padding: 15px;
-        text-align: center;
-        border: 3px solid transparent;
-        transition: all 0.3s ease;
-      }
-
-      .player-card.winner {
-        border-color: #28a745;
-        background: linear-gradient(135deg, #d4edda, #c3e6cb);
-      }
-
-      .player-card.loser {
-        border-color: #dc3545;
-        background: linear-gradient(135deg, #f8d7da, #f5c6cb);
-      }
-
-      .player-name {
-        font-size: 1.1rem;
-        font-weight: bold;
-        margin-bottom: 8px;
-        color: #333;
-        word-wrap: break-word;
-      }
-
-      .player-score {
-        font-size: 1.8rem;
-        font-weight: bold;
-        color: #667eea;
-        margin-bottom: 10px;
-      }
-
-      .score-input {
-        width: 100%;
-        text-align: center;
-        margin: 5px 0;
-        font-size: 16px;
-        padding: 12px;
-      }
-
-      .round-history {
-        max-height: 400px;
-        overflow-y: auto;
-      }
-
-      .round-item {
-        background: #f8f9fa;
-        border-radius: 8px;
-        padding: 15px;
-        margin-bottom: 10px;
-        border-left: 4px solid #667eea;
-      }
-
-      .round-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 10px;
-      }
-
-      .round-number {
-        font-weight: bold;
-        color: #667eea;
-      }
-
-      .round-scores {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
         gap: 10px;
-        font-size: 0.9rem;
+        margin-bottom: 15px;
       }
 
-      .stats-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 10px;
-        text-align: center;
+      .hidden {
+        display: none;
       }
 
-      .stat-item {
-        padding: 12px;
-        background: linear-gradient(135deg, #667eea, #764ba2);
-        color: white;
-        border-radius: 8px;
-      }
-
-      .stat-value {
-        font-size: 1.3rem;
-        font-weight: bold;
-      }
-
-      .stat-label {
-        font-size: 0.8rem;
-        opacity: 0.9;
-      }
-
+      /* Modal */
       .modal {
         display: none;
         position: fixed;
@@ -273,362 +337,205 @@
 
       .modal-content {
         background: white;
-        border-radius: 15px;
+        border-radius: 20px;
         padding: 20px;
         max-width: 95vw;
-        width: 100%;
+        width: 400px;
         text-align: center;
-        max-height: 90vh;
-        overflow-y: auto;
       }
 
-      .number-pad {
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 8px;
-        margin: 15px 0;
-        max-width: 280px;
-        margin-left: auto;
-        margin-right: auto;
-      }
-
-      .number-btn {
-        padding: 12px;
-        font-size: 18px;
-        font-weight: bold;
-        border: 2px solid #e1e5e9;
-        border-radius: 8px;
-        background: white;
-        color: #333;
-        cursor: pointer;
-        transition: all 0.2s ease;
-        min-height: 48px;
-        touch-action: manipulation;
-      }
-
-      .number-btn:hover {
-        background: #667eea;
-        color: white;
-        border-color: #667eea;
-        transform: scale(1.05);
-      }
-
-      .number-btn.negative {
-        background: #ff6b6b;
-        color: white;
-        border-color: #ff6b6b;
-      }
-
-      .number-btn.negative:hover {
-        background: #ff5252;
-        border-color: #ff5252;
-      }
-
-      .number-btn.zero {
-        background: #f8f9fa;
-      }
-
-      .number-btn.clear {
-        background: #ffa726;
-        color: white;
-        border-color: #ffa726;
-      }
-
-      .number-btn.clear:hover {
-        background: #ff9800;
-        border-color: #ff9800;
-      }
-
-      .active-input {
-        border: 3px solid #667eea !important;
-        box-shadow: 0 0 10px rgba(102, 126, 234, 0.3) !important;
-      }
-
-      .emoji {
-        font-size: 3rem;
+      .modal h3 {
+        color: #8e44ad;
         margin-bottom: 20px;
       }
 
-      .hidden {
-        display: none;
+      .modal-buttons {
+        display: flex;
+        gap: 10px;
+        margin-top: 20px;
       }
 
-      .data-status {
-        background: #e8f5e8;
-        border: 2px solid #28a745;
-        border-radius: 8px;
-        padding: 10px;
-        margin-bottom: 15px;
-        text-align: center;
-        font-size: 0.9rem;
-        color: #155724;
-      }
-
+      /* Responsive */
       @media (max-width: 768px) {
-        .players-grid {
-          grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-          gap: 8px;
+        .players-header {
+          grid-template-columns: 40px repeat(auto-fit, minmax(60px, 1fr));
+          gap: 3px;
         }
 
-        .header h1 {
-          font-size: 1.8rem;
-        }
-
-        .sidebar {
-          grid-template-columns: 1fr;
-          gap: 12px;
-        }
-
-        .number-pad {
-          grid-template-columns: repeat(3, 1fr);
-          gap: 6px;
-          max-width: 220px;
-        }
-
-        .number-btn {
-          padding: 10px;
-          font-size: 16px;
-          min-height: 44px;
-        }
-
-        .game-area {
-          padding: 15px;
-        }
-
-        .modal-content {
-          padding: 15px;
-        }
-
-        .player-card {
-          padding: 12px;
-        }
-
-        .player-score {
-          font-size: 1.5rem;
-        }
-      }
-
-      @media (max-width: 480px) {
-        .players-grid {
-          grid-template-columns: repeat(2, 1fr);
-        }
-
-        .container {
-          padding: 10px;
+        .round-row {
+          grid-template-columns: 40px repeat(auto-fit, minmax(60px, 1fr));
+          gap: 3px;
         }
 
         .player-name {
-          font-size: 1rem;
+          font-size: 12px;
         }
 
-        .player-score {
-          font-size: 1.4rem;
+        .player-total {
+          font-size: 16px;
         }
-      }
 
-      .shuffle-animation {
-        animation: shuffle 0.5s ease-in-out;
-      }
+        .score-cell {
+          font-size: 14px;
+          padding: 6px 3px;
+          min-height: 35px;
+        }
 
-      @keyframes shuffle {
-        0%,
-        100% {
-          transform: translateX(0);
+        .round-number {
+          font-size: 12px;
+          padding: 6px;
         }
-        25% {
-          transform: translateX(-10px);
+
+        .header-center {
+          width: 50px;
+          height: 50px;
+          font-size: 20px;
         }
-        75% {
-          transform: translateX(10px);
+
+        .icon-btn {
+          width: 40px;
+          height: 40px;
+          font-size: 18px;
+        }
+
+        .controls {
+          gap: 5px;
+        }
+
+        .control-btn {
+          padding: 10px 15px;
+          font-size: 12px;
         }
       }
     </style>
   </head>
   <body>
     <div class="container">
+      <!-- Header -->
       <div class="header">
-        <h1>🎴 Ghi Điểm Bài Tiến Lên</h1>
-        <p>Ghi điểm nhanh chóng và tiện lợi cho trò chơi tiến lên</p>
+        <div class="header-left">
+          <button class="icon-btn" onclick="goBack()" title="Quay lại">
+            ←
+          </button>
+          <button class="icon-btn" onclick="showSettings()" title="Cài đặt">
+            ⚙️
+          </button>
+        </div>
+        <div class="header-center" id="roundDisplay">1</div>
+        <div class="header-right">
+          <button class="icon-btn" onclick="showStats()" title="Thống kê">
+            📊
+          </button>
+          <button class="icon-btn" onclick="showMenu()" title="Menu">🎲</button>
+        </div>
       </div>
 
-      <div class="main-content">
-        <div class="game-area">
-          <div id="setupSection" class="setup-section">
-            <h3>🎮 Thiết Lập Game</h3>
+      <!-- Setup Section -->
+      <div id="setupSection" class="setup-section">
+        <h3>🎮 Thiết Lập Game</h3>
 
-            <div id="dataStatus" class="data-status hidden">
-              📱 Dữ liệu đã được lưu tự động! Game sẽ tiếp tục ngay cả khi bạn
-              reload trang.
-            </div>
-
-            <div class="input-group">
-              <label>Số người chơi:</label>
-              <select id="playerCount">
-                <option value="2">2 người</option>
-                <option value="3">3 người</option>
-                <option value="4" selected>4 người</option>
-                <option value="5">5 người</option>
-                <option value="6">6 người</option>
-                <option value="7">7 người</option>
-                <option value="8">8 người</option>
-                <option value="9">9 người</option>
-                <option value="10">10 người</option>
-              </select>
-              <button onclick="setupPlayers()">Thiết lập</button>
-            </div>
-
-            <div id="playerNames" class="hidden">
-              <h4>Nhập tên người chơi:</h4>
-              <div id="nameInputs"></div>
-              <button
-                onclick="startGame()"
-                class="btn-success"
-                style="width: 100%; margin-bottom: 8px"
-              >
-                🚀 Bắt đầu game
-              </button>
-              <button
-                onclick="shufflePlayers()"
-                class="btn-secondary"
-                style="width: 100%"
-              >
-                🔀 Xáo trộn vị trí
-              </button>
-            </div>
-          </div>
-
-          <div id="gameSection" class="hidden">
-            <div class="setup-section">
-              <h3>🎯 Ván số: <span id="roundNumber">1</span></h3>
-              <div class="players-grid" id="playersGrid"></div>
-
-              <div
-                style="
-                  text-align: center;
-                  margin-top: 15px;
-                  display: flex;
-                  flex-wrap: wrap;
-                  gap: 8px;
-                  justify-content: center;
-                "
-              >
-                <button
-                  onclick="showScoreModal()"
-                  class="btn-success"
-                  style="flex: 1; min-width: 120px"
-                >
-                  ✏️ Ghi điểm
-                </button>
-                <button
-                  onclick="undoLastRound()"
-                  class="btn-secondary"
-                  style="flex: 1; min-width: 120px"
-                >
-                  ↶ Hoàn tác
-                </button>
-                <button
-                  onclick="clearAllData()"
-                  class="btn-warning"
-                  style="flex: 1; min-width: 120px"
-                >
-                  🗑️ Xóa dữ liệu
-                </button>
-                <button
-                  onclick="resetGame()"
-                  class="btn-danger"
-                  style="flex: 1; min-width: 120px"
-                >
-                  🔄 Game mới
-                </button>
-              </div>
-            </div>
-          </div>
+        <div class="input-group">
+          <label>Số người chơi:</label>
+          <select id="playerCount">
+            <option value="2">2 người</option>
+            <option value="3">3 người</option>
+            <option value="4" selected>4 người</option>
+            <option value="5">5 người</option>
+            <option value="6">6 người</option>
+            <option value="7">7 người</option>
+          </select>
         </div>
 
-        <div class="sidebar">
-          <div class="card">
-            <h3>📊 Thống Kê</h3>
-            <div class="stats-grid" id="statsGrid">
-              <div class="stat-item">
-                <div class="stat-value" id="totalRounds">0</div>
-                <div class="stat-label">Số ván đã chơi</div>
-              </div>
-              <div class="stat-item">
-                <div class="stat-value" id="totalTime">00:00</div>
-                <div class="stat-label">Thời gian chơi</div>
-              </div>
-            </div>
-          </div>
+        <button onclick="setupPlayerNames()" class="btn-primary">
+          Thiết lập tên người chơi
+        </button>
 
-          <div class="card">
-            <h3>📝 Lịch Sử</h3>
-            <div class="round-history" id="roundHistory">
-              <p style="text-align: center; color: #666; font-style: italic">
-                Chưa có ván nào được chơi
-              </p>
-            </div>
+        <div id="playerNamesSection" class="hidden" style="margin-top: 20px">
+          <h4 style="margin-bottom: 15px; color: #8e44ad">
+            Nhập tên người chơi:
+          </h4>
+          <div id="playerNamesGrid" class="names-grid"></div>
+          <div style="display: flex; gap: 10px">
+            <button onclick="startGame()" class="btn-primary" style="flex: 1">
+              🚀 Bắt đầu game
+            </button>
+            <button
+              onclick="shufflePlayers()"
+              class="btn-primary"
+              style="
+                flex: 1;
+                background: linear-gradient(135deg, #f093fb, #f5576c);
+              "
+            >
+              🔀 Xáo trộn
+            </button>
           </div>
+        </div>
+      </div>
+
+      <!-- Game Section -->
+      <div id="gameSection" class="hidden">
+        <!-- Player Headers -->
+        <div class="players-header">
+          <div class="round-label">Ván</div>
+          <div id="playerHeaders"></div>
+        </div>
+
+        <!-- Game Board -->
+        <div class="game-board">
+          <div id="gameBoard"></div>
+        </div>
+
+        <!-- Controls -->
+        <div class="controls">
+          <button onclick="addNewRound()" class="control-btn btn-add">
+            ➕ Thêm
+          </button>
+          <button onclick="undoLastRound()" class="control-btn btn-undo">
+            ↶ Hoàn tác
+          </button>
+          <button onclick="showResults()" class="control-btn btn-result">
+            🏆 Kết thúc
+          </button>
         </div>
       </div>
     </div>
 
-    <!-- Modal ghi điểm -->
-    <div id="scoreModal" class="modal">
+    <!-- Settings Modal -->
+    <div id="settingsModal" class="modal">
       <div class="modal-content">
-        <h3>✏️ Ghi Điểm Ván <span id="modalRoundNumber"></span></h3>
-        <div id="scoreInputs"></div>
-
-        <!-- Bàn phím số -->
-        <div class="number-pad">
-          <div class="number-btn" onclick="inputNumber('1')">1</div>
-          <div class="number-btn" onclick="inputNumber('2')">2</div>
-          <div class="number-btn" onclick="inputNumber('3')">3</div>
-          <div class="number-btn" onclick="inputNumber('4')">4</div>
-          <div class="number-btn" onclick="inputNumber('5')">5</div>
-
-          <div class="number-btn" onclick="inputNumber('6')">6</div>
-          <div class="number-btn" onclick="inputNumber('7')">7</div>
-          <div class="number-btn" onclick="inputNumber('8')">8</div>
-          <div class="number-btn" onclick="inputNumber('9')">9</div>
-          <div class="number-btn zero" onclick="inputNumber('0')">0</div>
-
-          <div
-            class="number-btn negative"
-            onclick="inputNumber('-')"
-            title="Thêm dấu âm"
-          >
-            −
+        <h3>⚙️ Cài Đặt</h3>
+        <div style="text-align: left">
+          <div class="input-group">
+            <label>Điểm kết thúc game:</label>
+            <input
+              type="number"
+              id="endGameScore"
+              value="100"
+              min="50"
+              max="500"
+              step="10"
+            />
           </div>
-          <div
-            class="number-btn clear"
-            onclick="clearCurrentInput()"
-            title="Xóa"
-          >
-            C
+          <div class="input-group">
+            <label>Tự động lưu:</label>
+            <select id="autoSave">
+              <option value="true" selected>Bật</option>
+              <option value="false">Tắt</option>
+            </select>
           </div>
         </div>
-
-        <p
-          style="font-size: 13px; color: #666; margin: 15px 0; line-height: 1.4"
-        >
-          💡 Click vào ô điểm rồi dùng bàn phím số để nhập nhanh
-        </p>
-
-        <div
-          style="
-            margin-top: 15px;
-            display: flex;
-            gap: 8px;
-            justify-content: center;
-          "
-        >
-          <button onclick="submitScore()" class="btn-success" style="flex: 1">
-            ✅ Xác nhận
+        <div class="modal-buttons">
+          <button onclick="saveSettings()" class="btn-primary" style="flex: 1">
+            ✅ Lưu
           </button>
           <button
-            onclick="closeScoreModal()"
-            class="btn-secondary"
-            style="flex: 1"
+            onclick="closeModal('settingsModal')"
+            class="btn-primary"
+            style="
+              flex: 1;
+              background: linear-gradient(135deg, #fa709a, #fee140);
+            "
           >
             ❌ Hủy
           </button>
@@ -636,30 +543,24 @@
       </div>
     </div>
 
-    <!-- Modal kết thúc game -->
-    <div id="gameEndModal" class="modal">
+    <!-- Results Modal -->
+    <div id="resultsModal" class="modal">
       <div class="modal-content">
-        <div class="emoji">🎉</div>
-        <h2>Chúc mừng!</h2>
-        <h3 id="winnerName"></h3>
-        <p>đã giành chiến thắng!</p>
-        <div
-          style="
-            margin-top: 15px;
-            display: flex;
-            gap: 8px;
-            justify-content: center;
-          "
-        >
-          <button onclick="resetGame()" class="btn-success" style="flex: 1">
-            🎮 Chơi lại
+        <h3>🏆 Kết Quả</h3>
+        <div id="finalResults"></div>
+        <div class="modal-buttons">
+          <button onclick="newGame()" class="btn-primary" style="flex: 1">
+            🎮 Game mới
           </button>
           <button
-            onclick="closeGameEndModal()"
-            class="btn-secondary"
-            style="flex: 1"
+            onclick="closeModal('resultsModal')"
+            class="btn-primary"
+            style="
+              flex: 1;
+              background: linear-gradient(135deg, #4facfe, #00f2fe);
+            "
           >
-            📊 Xem kết quả
+            📊 Tiếp tục
           </button>
         </div>
       </div>
@@ -667,185 +568,56 @@
 
     <script>
       let players = [];
-      let roundHistory = [];
+      let rounds = [];
       let currentRound = 1;
-      let gameStartTime = null;
-      let timerInterval = null;
-      let activeInput = null;
-      let totalElapsedTime = 0;
-
-      // Local Storage keys
-      const STORAGE_KEYS = {
-        players: "tienlen_players",
-        roundHistory: "tienlen_roundHistory",
-        currentRound: "tienlen_currentRound",
-        gameStartTime: "tienlen_gameStartTime",
-        totalElapsedTime: "tienlen_totalElapsedTime",
-        isGameActive: "tienlen_isGameActive",
+      let gameSettings = {
+        endGameScore: 100,
+        autoSave: true,
       };
 
-      // Save data to localStorage
-      function saveGameData() {
-        try {
-          const gameData = {
-            players: players,
-            roundHistory: roundHistory,
-            currentRound: currentRound,
-            gameStartTime: gameStartTime,
-            totalElapsedTime: totalElapsedTime,
-            isGameActive: true,
-          };
-
-          Object.keys(gameData).forEach((key) => {
-            if (STORAGE_KEYS[key]) {
-              const value = gameData[key];
-              localStorage.setItem(STORAGE_KEYS[key], JSON.stringify(value));
-            }
-          });
-
-          // Show data status
-          const statusEl = document.getElementById("dataStatus");
-          if (statusEl && players.length > 0) {
-            statusEl.classList.remove("hidden");
-          }
-        } catch (error) {
-          console.log("Không thể lưu dữ liệu:", error);
+      // Initialize app
+      function init() {
+        loadGameData();
+        if (players.length > 0) {
+          showGameSection();
         }
       }
 
-      // Load data from localStorage
-      function loadGameData() {
-        try {
-          const isGameActive = JSON.parse(
-            localStorage.getItem(STORAGE_KEYS.isGameActive) || "false"
-          );
-
-          if (!isGameActive) return false;
-
-          const savedPlayers = JSON.parse(
-            localStorage.getItem(STORAGE_KEYS.players) || "[]"
-          );
-          const savedRoundHistory = JSON.parse(
-            localStorage.getItem(STORAGE_KEYS.roundHistory) || "[]"
-          );
-          const savedCurrentRound = JSON.parse(
-            localStorage.getItem(STORAGE_KEYS.currentRound) || "1"
-          );
-          const savedGameStartTime = JSON.parse(
-            localStorage.getItem(STORAGE_KEYS.gameStartTime) || "null"
-          );
-          const savedTotalElapsedTime = JSON.parse(
-            localStorage.getItem(STORAGE_KEYS.totalElapsedTime) || "0"
-          );
-
-          if (savedPlayers.length > 0) {
-            players = savedPlayers;
-            roundHistory = savedRoundHistory;
-            currentRound = savedCurrentRound;
-            gameStartTime = savedGameStartTime;
-            totalElapsedTime = savedTotalElapsedTime;
-
-            // Restore game state
-            document.getElementById("setupSection").classList.add("hidden");
-            document.getElementById("gameSection").classList.remove("hidden");
-            document.getElementById("roundNumber").textContent = currentRound;
-
-            startTimer();
-            updatePlayersDisplay();
-            updateHistory();
-            updateStats();
-
-            return true;
-          }
-        } catch (error) {
-          console.log("Không thể tải dữ liệu:", error);
-        }
-        return false;
-      }
-
-      // Clear all saved data
-      function clearAllData() {
-        if (
-          confirm(
-            "Bạn có chắc muốn xóa toàn bộ dữ liệu đã lưu? Hành động này không thể hoàn tác!"
-          )
-        ) {
-          Object.values(STORAGE_KEYS).forEach((key) => {
-            localStorage.removeItem(key);
-          });
-
-          // Reset game state
-          players = [];
-          roundHistory = [];
-          currentRound = 1;
-          gameStartTime = null;
-          totalElapsedTime = 0;
-
-          if (timerInterval) {
-            clearInterval(timerInterval);
-          }
-
-          document.getElementById("setupSection").classList.remove("hidden");
-          document.getElementById("gameSection").classList.add("hidden");
-          document.getElementById("playerNames").classList.add("hidden");
-          document.getElementById("dataStatus").classList.add("hidden");
-          document.getElementById("gameEndModal").classList.remove("show");
-          document.getElementById("scoreModal").classList.remove("show");
-
-          activeInput = null;
-
-          document.getElementById("totalTime").textContent = "00:00";
-          document.getElementById("roundHistory").innerHTML =
-            '<p style="text-align: center; color: #666; font-style: italic;">Chưa có ván nào được chơi</p>';
-
-          updateStats();
-          setupPlayers();
-
-          alert("Đã xóa toàn bộ dữ liệu!");
-        }
-      }
-
-      function setupPlayers() {
+      function setupPlayerNames() {
         const count = parseInt(document.getElementById("playerCount").value);
-        const nameInputs = document.getElementById("nameInputs");
-        nameInputs.innerHTML = "";
+        const grid = document.getElementById("playerNamesGrid");
+        grid.innerHTML = "";
 
         for (let i = 1; i <= count; i++) {
-          const div = document.createElement("div");
-          div.className = "input-group";
-          div.innerHTML = `
-                    <label>Người chơi ${i}:</label>
-                    <input type="text" id="player${i}" placeholder="Nhập tên..." value="Người chơi ${i}">
-                `;
-          nameInputs.appendChild(div);
+          const input = document.createElement("input");
+          input.type = "text";
+          input.id = `playerName${i}`;
+          input.placeholder = `Người chơi ${i}`;
+          input.value = `Người chơi ${i}`;
+          grid.appendChild(input);
         }
 
-        document.getElementById("playerNames").classList.remove("hidden");
+        document
+          .getElementById("playerNamesSection")
+          .classList.remove("hidden");
       }
 
       function shufflePlayers() {
         const count = parseInt(document.getElementById("playerCount").value);
-        const inputs = [];
+        const names = [];
 
         for (let i = 1; i <= count; i++) {
-          inputs.push(
-            document.getElementById(`player${i}`).value || `Người chơi ${i}`
-          );
+          names.push(document.getElementById(`playerName${i}`).value);
         }
 
         // Fisher-Yates shuffle
-        for (let i = inputs.length - 1; i > 0; i--) {
+        for (let i = names.length - 1; i > 0; i--) {
           const j = Math.floor(Math.random() * (i + 1));
-          [inputs[i], inputs[j]] = [inputs[j], inputs[i]];
+          [names[i], names[j]] = [names[j], names[i]];
         }
 
         for (let i = 1; i <= count; i++) {
-          const input = document.getElementById(`player${i}`);
-          input.value = inputs[i - 1];
-          input.parentElement.classList.add("shuffle-animation");
-          setTimeout(() => {
-            input.parentElement.classList.remove("shuffle-animation");
-          }, 500);
+          document.getElementById(`playerName${i}`).value = names[i - 1];
         }
       }
 
@@ -855,341 +627,300 @@
 
         for (let i = 1; i <= count; i++) {
           const name =
-            document.getElementById(`player${i}`).value || `Người chơi ${i}`;
+            document.getElementById(`playerName${i}`).value ||
+            `Người chơi ${i}`;
           players.push({
             name: name,
-            score: 0,
-            roundScores: [],
+            scores: [],
+            totalScore: 0,
           });
         }
 
+        rounds = [];
+        currentRound = 1;
+
+        showGameSection();
+        saveGameData();
+      }
+
+      function showGameSection() {
         document.getElementById("setupSection").classList.add("hidden");
         document.getElementById("gameSection").classList.remove("hidden");
 
-        gameStartTime = Date.now();
-        totalElapsedTime = 0;
-        startTimer();
-        updatePlayersDisplay();
-        updateStats();
-        saveGameData();
+        renderPlayerHeaders();
+        renderGameBoard();
+        updateRoundDisplay();
       }
 
-      function startTimer() {
-        if (timerInterval) {
-          clearInterval(timerInterval);
-        }
+      function renderPlayerHeaders() {
+        const headersDiv = document.getElementById("playerHeaders");
+        headersDiv.innerHTML = "";
 
-        timerInterval = setInterval(() => {
-          if (gameStartTime) {
-            const currentElapsed = Date.now() - gameStartTime;
-            const totalTime = totalElapsedTime + currentElapsed;
-            const minutes = Math.floor(totalTime / 60000);
-            const seconds = Math.floor((totalTime % 60000) / 1000);
-            document.getElementById("totalTime").textContent = `${minutes
-              .toString()
-              .padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
-          }
-        }, 1000);
-      }
-
-      function updatePlayersDisplay() {
-        const grid = document.getElementById("playersGrid");
-        grid.innerHTML = "";
-
-        players.forEach((player, index) => {
-          const card = document.createElement("div");
-          card.className = "player-card";
-
-          // Determine winner/loser status
-          if (players.length > 1) {
-            const scores = players.map((p) => p.score);
-            const minScore = Math.min(...scores);
-            const maxScore = Math.max(...scores);
-
-            if (player.score === minScore && minScore !== maxScore) {
-              card.classList.add("winner");
-            } else if (player.score === maxScore && minScore !== maxScore) {
-              card.classList.add("loser");
-            }
-          }
-
-          card.innerHTML = `
+        players.forEach((player) => {
+          const header = document.createElement("div");
+          header.className = "player-header";
+          header.innerHTML = `
                     <div class="player-name">${player.name}</div>
-                    <div class="player-score">${player.score}</div>
+                    <div class="player-total">${player.totalScore}</div>
                 `;
-          grid.appendChild(card);
+          headersDiv.appendChild(header);
         });
       }
 
-      function showScoreModal() {
-        document.getElementById("modalRoundNumber").textContent = currentRound;
-        const inputs = document.getElementById("scoreInputs");
-        inputs.innerHTML = "";
+      function renderGameBoard() {
+        const board = document.getElementById("gameBoard");
+        board.innerHTML = "";
 
-        players.forEach((player, index) => {
-          const div = document.createElement("div");
-          div.className = "input-group";
-          div.innerHTML = `
-                    <label>${player.name}:</label>
-                    <input type="number" id="score${index}" class="score-input" placeholder="0" value="0" 
-                           onclick="setActiveInput(this)" onfocus="setActiveInput(this)">
-                `;
-          inputs.appendChild(div);
-        });
+        // Render rounds from newest to oldest
+        for (let i = rounds.length - 1; i >= 0; i--) {
+          const round = rounds[i];
+          const row = document.createElement("div");
+          row.className = "round-row";
 
-        // Set first input as active by default
-        setTimeout(() => {
-          const firstInput = document.getElementById("score0");
-          if (firstInput) {
-            setActiveInput(firstInput);
-          }
-        }, 100);
+          // Round number
+          const roundNum = document.createElement("div");
+          roundNum.className = "round-number";
+          roundNum.textContent = round.roundNumber;
+          row.appendChild(roundNum);
 
-        document.getElementById("scoreModal").classList.add("show");
-      }
-
-      function setActiveInput(input) {
-        // Remove active class from all inputs
-        document.querySelectorAll(".score-input").forEach((inp) => {
-          inp.classList.remove("active-input");
-        });
-
-        // Add active class to selected input
-        input.classList.add("active-input");
-        activeInput = input;
-        input.focus();
-      }
-
-      function inputNumber(value) {
-        if (!activeInput) {
-          // If no input is active, select the first one
-          const firstInput = document.getElementById("score0");
-          if (firstInput) {
-            setActiveInput(firstInput);
-          } else {
-            return;
-          }
-        }
-
-        if (value === "-") {
-          // Toggle negative sign
-          const currentValue = activeInput.value;
-          if (currentValue.startsWith("-")) {
-            activeInput.value = currentValue.substring(1);
-          } else if (currentValue === "0" || currentValue === "") {
-            activeInput.value = "-";
-          } else {
-            activeInput.value = "-" + currentValue;
-          }
-        } else {
-          // Add number
-          const currentValue = activeInput.value;
-          if (currentValue === "0" || currentValue === "-0") {
-            if (currentValue === "-0") {
-              activeInput.value = "-" + value;
-            } else {
-              activeInput.value = value;
-            }
-          } else {
-            activeInput.value = currentValue + value;
-          }
-        }
-      }
-
-      function clearCurrentInput() {
-        if (activeInput) {
-          activeInput.value = "0";
-        }
-      }
-
-      function closeScoreModal() {
-        document.getElementById("scoreModal").classList.remove("show");
-        activeInput = null;
-      }
-
-      function submitScore() {
-        const roundScores = [];
-        let totalScore = 0;
-
-        players.forEach((player, index) => {
-          const scoreInput = document.getElementById(`score${index}`);
-          const score = parseInt(scoreInput.value) || 0;
-          roundScores.push({
-            playerName: player.name,
-            score: score,
+          // Scores for each player
+          players.forEach((player, playerIndex) => {
+            const cell = document.createElement("div");
+            cell.className = "score-cell";
+            cell.textContent = round.scores[playerIndex] || 0;
+            cell.onclick = () => editScore(i, playerIndex, cell);
+            row.appendChild(cell);
           });
-          player.score += score;
-          player.roundScores.push(score);
-          totalScore += score;
-        });
 
-        roundHistory.push({
-          round: currentRound,
-          scores: roundScores,
-          timestamp: new Date().toLocaleTimeString("vi-VN"),
-        });
+          board.appendChild(row);
+        }
+      }
 
-        currentRound++;
-        document.getElementById("roundNumber").textContent = currentRound;
+      function editScore(roundIndex, playerIndex, cell) {
+        const currentScore = rounds[roundIndex].scores[playerIndex] || 0;
 
-        updatePlayersDisplay();
-        updateHistory();
-        updateStats();
-        closeScoreModal();
+        const input = document.createElement("input");
+        input.className = "score-input";
+        input.type = "number";
+        input.value = currentScore;
+        input.onblur = () =>
+          saveScore(roundIndex, playerIndex, input.value, cell);
+        input.onkeypress = (e) => {
+          if (e.key === "Enter") {
+            input.blur();
+          }
+        };
+
+        cell.innerHTML = "";
+        cell.appendChild(input);
+        cell.classList.add("editing");
+        input.focus();
+        input.select();
+      }
+
+      function saveScore(roundIndex, playerIndex, newScore, cell) {
+        const score = parseInt(newScore) || 0;
+        const oldScore = rounds[roundIndex].scores[playerIndex] || 0;
+
+        rounds[roundIndex].scores[playerIndex] = score;
+
+        // Update player total
+        players[playerIndex].totalScore =
+          players[playerIndex].totalScore - oldScore + score;
+
+        cell.classList.remove("editing");
+        cell.textContent = score;
+
+        renderPlayerHeaders();
         saveGameData();
-
         checkGameEnd();
       }
 
-      function updateHistory() {
-        const history = document.getElementById("roundHistory");
-        history.innerHTML = "";
+      function addNewRound() {
+        const newRound = {
+          roundNumber: currentRound,
+          scores: new Array(players.length).fill(0),
+        };
 
-        roundHistory
-          .slice()
-          .reverse()
-          .forEach((round) => {
-            const item = document.createElement("div");
-            item.className = "round-item";
+        rounds.push(newRound);
+        currentRound++;
 
-            const scoresHtml = round.scores
-              .map(
-                (s) =>
-                  `<div><strong>${s.playerName}:</strong> ${
-                    s.score > 0 ? "+" : ""
-                  }${s.score}</div>`
-              )
-              .join("");
+        updateRoundDisplay();
+        renderGameBoard();
+        saveGameData();
 
-            item.innerHTML = `
-                    <div class="round-header">
-                        <span class="round-number">Ván ${round.round}</span>
-                        <span>${round.timestamp}</span>
-                    </div>
-                    <div class="round-scores">${scoresHtml}</div>
-                `;
-            history.appendChild(item);
-          });
-      }
-
-      function updateStats() {
-        document.getElementById("totalRounds").textContent =
-          roundHistory.length;
+        // Auto-edit the first cell of the new round
+        setTimeout(() => {
+          const firstCell = document.querySelector(".round-row .score-cell");
+          if (firstCell) {
+            firstCell.click();
+          }
+        }, 100);
       }
 
       function undoLastRound() {
-        if (roundHistory.length === 0) return;
+        if (rounds.length === 0) return;
 
-        if (confirm("Bạn có chắc muốn hoàn tác ván cuối?")) {
-          const lastRound = roundHistory.pop();
+        if (confirm("Bạn có chắc muốn xóa ván cuối?")) {
+          const lastRound = rounds.pop();
           currentRound--;
 
+          // Update player totals
           players.forEach((player, index) => {
-            const lastScore = player.roundScores.pop();
-            player.score -= lastScore;
+            const score = lastRound.scores[index] || 0;
+            player.totalScore -= score;
           });
 
-          document.getElementById("roundNumber").textContent = currentRound;
-          updatePlayersDisplay();
-          updateHistory();
-          updateStats();
+          updateRoundDisplay();
+          renderPlayerHeaders();
+          renderGameBoard();
           saveGameData();
         }
+      }
+
+      function updateRoundDisplay() {
+        document.getElementById("roundDisplay").textContent = currentRound;
       }
 
       function checkGameEnd() {
-        const maxScore = Math.max(...players.map((p) => p.score));
-        if (maxScore >= 100) {
-          // Có thể tùy chỉnh điều kiện kết thúc
-          const winner = players.find(
-            (p) => p.score === Math.min(...players.map((p) => p.score))
-          );
-          document.getElementById("winnerName").textContent = winner.name;
-          document.getElementById("gameEndModal").classList.add("show");
-
-          // Update total elapsed time before stopping timer
-          if (gameStartTime) {
-            totalElapsedTime += Date.now() - gameStartTime;
-            gameStartTime = null;
-          }
-
-          if (timerInterval) {
-            clearInterval(timerInterval);
-          }
+        const maxScore = Math.max(...players.map((p) => p.totalScore));
+        if (maxScore >= gameSettings.endGameScore) {
+          setTimeout(() => {
+            showResults();
+          }, 500);
         }
       }
 
-      function closeGameEndModal() {
-        document.getElementById("gameEndModal").classList.remove("show");
+      function showResults() {
+        const sortedPlayers = [...players].sort(
+          (a, b) => a.totalScore - b.totalScore
+        );
+
+        let resultsHTML = '<div style="text-align: left;">';
+        sortedPlayers.forEach((player, index) => {
+          const medal =
+            index === 0 ? "🥇" : index === 1 ? "🥈" : index === 2 ? "🥉" : "🏅";
+          resultsHTML += `
+                    <div style="padding: 10px; margin: 5px 0; background: #f8f9fa; border-radius: 10px; display: flex; justify-content: space-between; align-items: center;">
+                        <span>${medal} ${player.name}</span>
+                        <span style="font-weight: bold; color: #8e44ad;">${player.totalScore}</span>
+                    </div>
+                `;
+        });
+        resultsHTML += "</div>";
+
+        document.getElementById("finalResults").innerHTML = resultsHTML;
+        document.getElementById("resultsModal").classList.add("show");
       }
 
-      function resetGame() {
+      function newGame() {
         if (confirm("Bạn có chắc muốn bắt đầu game mới?")) {
-          // Update total elapsed time before reset
-          if (gameStartTime) {
-            totalElapsedTime += Date.now() - gameStartTime;
-          }
-
           players = [];
-          roundHistory = [];
+          rounds = [];
           currentRound = 1;
-          gameStartTime = null;
-          totalElapsedTime = 0;
 
-          if (timerInterval) {
-            clearInterval(timerInterval);
-          }
-
-          document.getElementById("setupSection").classList.remove("hidden");
           document.getElementById("gameSection").classList.add("hidden");
-          document.getElementById("playerNames").classList.add("hidden");
-          document.getElementById("dataStatus").classList.add("hidden");
-          document.getElementById("gameEndModal").classList.remove("show");
-          document.getElementById("scoreModal").classList.remove("show");
+          document.getElementById("setupSection").classList.remove("hidden");
+          document.getElementById("playerNamesSection").classList.add("hidden");
 
-          activeInput = null;
-
-          document.getElementById("totalTime").textContent = "00:00";
-          document.getElementById("roundHistory").innerHTML =
-            '<p style="text-align: center; color: #666; font-style: italic;">Chưa có ván nào được chơi</p>';
-
-          updateStats();
-          saveGameData();
-          setupPlayers();
+          closeModal("resultsModal");
+          clearGameData();
         }
       }
 
-      // Initialize the app
-      function initApp() {
-        // Try to load saved game first
-        const gameLoaded = loadGameData();
-
-        if (!gameLoaded) {
-          // No saved game, start fresh
-          setupPlayers();
+      function goBack() {
+        if (confirm("Bạn có muốn quay lại màn hình thiết lập?")) {
+          newGame();
         }
       }
 
-      // Run when page loads
-      window.addEventListener("load", initApp);
+      function showSettings() {
+        document.getElementById("endGameScore").value =
+          gameSettings.endGameScore;
+        document.getElementById("autoSave").value =
+          gameSettings.autoSave.toString();
+        document.getElementById("settingsModal").classList.add("show");
+      }
 
-      // Save data when page is about to unload
-      window.addEventListener("beforeunload", () => {
-        if (players.length > 0) {
-          // Update total elapsed time
-          if (gameStartTime) {
-            totalElapsedTime += Date.now() - gameStartTime;
+      function saveSettings() {
+        gameSettings.endGameScore = parseInt(
+          document.getElementById("endGameScore").value
+        );
+        gameSettings.autoSave =
+          document.getElementById("autoSave").value === "true";
+
+        saveGameData();
+        closeModal("settingsModal");
+        alert("Đã lưu cài đặt!");
+      }
+
+      function showStats() {
+        alert("Tính năng thống kê sẽ được bổ sung trong phiên bản sau!");
+      }
+
+      function showMenu() {
+        const menu = confirm("Menu:\n1. OK - Cài đặt\n2. Hủy - Đóng");
+        if (menu) {
+          showSettings();
+        }
+      }
+
+      function closeModal(modalId) {
+        document.getElementById(modalId).classList.remove("show");
+      }
+
+      // Storage functions
+      function saveGameData() {
+        if (!gameSettings.autoSave) return;
+
+        const gameData = {
+          players,
+          rounds,
+          currentRound,
+          gameSettings,
+        };
+
+        try {
+          const data = JSON.stringify(gameData);
+          localStorage.setItem("tienlen_game_data", data);
+        } catch (error) {
+          console.log("Không thể lưu dữ liệu:", error);
+        }
+      }
+
+      function loadGameData() {
+        try {
+          const data = localStorage.getItem("tienlen_game_data");
+          if (data) {
+            const gameData = JSON.parse(data);
+            players = gameData.players || [];
+            rounds = gameData.rounds || [];
+            currentRound = gameData.currentRound || 1;
+            gameSettings = { ...gameSettings, ...gameData.gameSettings };
+            return true;
           }
-          saveGameData();
+        } catch (error) {
+          console.log("Không thể tải dữ liệu:", error);
         }
-      });
+        return false;
+      }
 
-      // Auto-save every 30 seconds during active game
+      function clearGameData() {
+        localStorage.removeItem("tienlen_game_data");
+      }
+
+      // Auto-save every 30 seconds
       setInterval(() => {
-        if (players.length > 0) {
+        if (players.length > 0 && gameSettings.autoSave) {
           saveGameData();
         }
       }, 30000);
+
+      // Initialize on load
+      window.addEventListener("load", init);
+
+      // Save before unload
+      window.addEventListener("beforeunload", saveGameData);
     </script>
   </body>
 </html>
