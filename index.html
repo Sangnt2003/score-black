@@ -27,6 +27,7 @@
         max-width: 100%;
         margin: 0 auto;
         padding: 10px;
+        padding-bottom: 200px; /* Space for virtual keyboard */
       }
 
       .header {
@@ -199,6 +200,67 @@
         font-size: 16px;
         color: #2c3e50;
         outline: none;
+      }
+
+      /* Virtual Keyboard */
+      .virtual-keyboard {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        padding: 15px;
+        border-top: 2px solid #e1e5e9;
+        z-index: 1000;
+        transform: translateY(100%);
+        transition: transform 0.3s ease;
+      }
+
+      .virtual-keyboard.show {
+        transform: translateY(0);
+      }
+
+      .keyboard-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+        max-width: 300px;
+        margin: 0 auto;
+      }
+
+      .keyboard-btn {
+        background: #8e44ad;
+        color: white;
+        border: none;
+        border-radius: 10px;
+        padding: 15px;
+        font-size: 18px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .keyboard-btn:hover {
+        background: #9b59b6;
+        transform: scale(1.05);
+      }
+
+      .keyboard-btn.special {
+        background: #e74c3c;
+      }
+
+      .keyboard-btn.special:hover {
+        background: #c0392b;
+      }
+
+      .keyboard-btn.confirm {
+        background: #27ae60;
+        grid-column: span 3;
+      }
+
+      .keyboard-btn.confirm:hover {
+        background: #2ecc71;
       }
 
       /* Control buttons */
@@ -406,6 +468,10 @@
           padding: 10px 15px;
           font-size: 12px;
         }
+
+        .container {
+          padding-bottom: 250px; /* More space on mobile */
+        }
       }
     </style>
   </head>
@@ -566,6 +632,29 @@
       </div>
     </div>
 
+    <!-- Virtual Keyboard -->
+    <div id="virtualKeyboard" class="virtual-keyboard">
+      <div class="keyboard-grid">
+        <button class="keyboard-btn" onclick="inputNumber('1')">1</button>
+        <button class="keyboard-btn" onclick="inputNumber('2')">2</button>
+        <button class="keyboard-btn" onclick="inputNumber('3')">3</button>
+        <button class="keyboard-btn" onclick="inputNumber('4')">4</button>
+        <button class="keyboard-btn" onclick="inputNumber('5')">5</button>
+        <button class="keyboard-btn" onclick="inputNumber('6')">6</button>
+        <button class="keyboard-btn" onclick="inputNumber('7')">7</button>
+        <button class="keyboard-btn" onclick="inputNumber('8')">8</button>
+        <button class="keyboard-btn" onclick="inputNumber('9')">9</button>
+        <button class="keyboard-btn special" onclick="inputNumber('-')">
+          -
+        </button>
+        <button class="keyboard-btn" onclick="inputNumber('0')">0</button>
+        <button class="keyboard-btn special" onclick="deleteChar()">⌫</button>
+        <button class="keyboard-btn confirm" onclick="confirmScore()">
+          ✅ Xác nhận
+        </button>
+      </div>
+    </div>
+
     <script>
       let players = [];
       let rounds = [];
@@ -574,6 +663,8 @@
         endGameScore: 100,
         autoSave: true,
       };
+      let currentEditingInput = null;
+      let gameData = {}; // In-memory storage instead of localStorage
 
       // Initialize app
       function init() {
@@ -701,21 +792,79 @@
 
         const input = document.createElement("input");
         input.className = "score-input";
-        input.type = "number";
+        input.type = "text";
         input.value = currentScore;
-        input.onblur = () =>
-          saveScore(roundIndex, playerIndex, input.value, cell);
-        input.onkeypress = (e) => {
-          if (e.key === "Enter") {
-            input.blur();
-          }
+        input.readonly = true; // Prevent system keyboard
+        input.inputmode = "none"; // Additional prevention for mobile keyboards
+
+        // Store reference for virtual keyboard
+        currentEditingInput = {
+          input: input,
+          roundIndex: roundIndex,
+          playerIndex: playerIndex,
+          cell: cell,
         };
 
         cell.innerHTML = "";
         cell.appendChild(input);
         cell.classList.add("editing");
+
+        // Show virtual keyboard
+        document.getElementById("virtualKeyboard").classList.add("show");
+
         input.focus();
         input.select();
+      }
+
+      function inputNumber(char) {
+        if (!currentEditingInput) return;
+
+        const input = currentEditingInput.input;
+        const currentValue = input.value;
+
+        if (char === "-") {
+          // Toggle negative sign
+          if (currentValue.startsWith("-")) {
+            input.value = currentValue.substring(1);
+          } else {
+            input.value = "-" + currentValue;
+          }
+        } else {
+          // Add number
+          if (currentValue === "0") {
+            input.value = char;
+          } else {
+            input.value = currentValue + char;
+          }
+        }
+      }
+
+      function deleteChar() {
+        if (!currentEditingInput) return;
+
+        const input = currentEditingInput.input;
+        const currentValue = input.value;
+
+        if (currentValue.length > 0) {
+          input.value = currentValue.slice(0, -1);
+        }
+
+        if (input.value === "" || input.value === "-") {
+          input.value = "0";
+        }
+      }
+
+      function confirmScore() {
+        if (!currentEditingInput) return;
+
+        const { input, roundIndex, playerIndex, cell } = currentEditingInput;
+        const newScore = input.value;
+
+        saveScore(roundIndex, playerIndex, newScore, cell);
+
+        // Hide virtual keyboard
+        document.getElementById("virtualKeyboard").classList.remove("show");
+        currentEditingInput = null;
       }
 
       function saveScore(roundIndex, playerIndex, newScore, cell) {
@@ -793,7 +942,7 @@
 
       function showResults() {
         const sortedPlayers = [...players].sort(
-          (a, b) => a.totalScore - b.totalScore
+          (a, b) => b.totalScore - a.totalScore // Sort from high to low
         );
 
         let resultsHTML = '<div style="text-align: left;">';
@@ -825,6 +974,10 @@
 
           closeModal("resultsModal");
           clearGameData();
+
+          // Hide virtual keyboard if showing
+          document.getElementById("virtualKeyboard").classList.remove("show");
+          currentEditingInput = null;
         }
       }
 
@@ -869,30 +1022,21 @@
         document.getElementById(modalId).classList.remove("show");
       }
 
-      // Storage functions
+      // Storage functions (using in-memory storage instead of localStorage)
       function saveGameData() {
         if (!gameSettings.autoSave) return;
 
-        const gameData = {
+        gameData = {
           players,
           rounds,
           currentRound,
           gameSettings,
         };
-
-        try {
-          const data = JSON.stringify(gameData);
-          localStorage.setItem("tienlen_game_data", data);
-        } catch (error) {
-          console.log("Không thể lưu dữ liệu:", error);
-        }
       }
 
       function loadGameData() {
         try {
-          const data = localStorage.getItem("tienlen_game_data");
-          if (data) {
-            const gameData = JSON.parse(data);
+          if (gameData.players) {
             players = gameData.players || [];
             rounds = gameData.rounds || [];
             currentRound = gameData.currentRound || 1;
@@ -906,8 +1050,26 @@
       }
 
       function clearGameData() {
-        localStorage.removeItem("tienlen_game_data");
+        gameData = {};
       }
+
+      // Close virtual keyboard when clicking outside
+      document.addEventListener("click", function (event) {
+        const keyboard = document.getElementById("virtualKeyboard");
+        const isKeyboardClick = keyboard.contains(event.target);
+        const isScoreCell = event.target.closest(".score-cell");
+
+        if (!isKeyboardClick && !isScoreCell && currentEditingInput) {
+          confirmScore();
+        }
+      });
+
+      // Prevent default touch behaviors that might trigger system keyboard
+      document.addEventListener("touchstart", function (event) {
+        if (event.target.classList.contains("score-input")) {
+          event.preventDefault();
+        }
+      });
 
       // Auto-save every 30 seconds
       setInterval(() => {
